@@ -1,0 +1,37 @@
+# Build
+bin/
+obj/
+
+# IDE
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Logs
+*.log
+logs/
+
+# Generated output
+output/
+*_carenze.docx
+*.pdf
+
+# Local student archive
+Data/studenti.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env/secrets
+.env
+.env.*
+secrets.json
+appsettings.Development.json

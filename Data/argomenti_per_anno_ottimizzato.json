@@ -1,0 +1,246 @@
+{
+  "metadati": {
+    "descrizione": "Argomenti normalizzati per anno di corso, con duplicati e argomenti simili fusi.",
+    "origine": "argomenti_per_anno.json",
+    "criterio": "Raggruppamento per anno; fusione per titolo normalizzato e similarità; unione di conoscenze e abilità senza duplicati quasi identici."
+  },
+  "argomentiPerAnno": {
+    "prime": [
+      {
+        "titolo": "Architettura del computer e sistemi operativi",
+        "classiOrigine": [
+          "1F",
+          "1T"
+        ],
+        "conoscenze": [
+          "Architettura di un elaboratore e sue componenti",
+          "Sistemi operativi"
+        ],
+        "abilita": [
+          "Riconoscere gli elementi fondanti dell’architettura di un personal computer",
+          "Comprendere il ruolo del sistema operativo"
+        ]
+      },
+      {
+        "titolo": "Codifica delle informazioni",
+        "classiOrigine": [
+          "1F",
+          "1T"
+        ],
+        "conoscenze": [
+          "Codifica delle informazioni (binario, rappresentazione in complemento a due, esadecimale)"
+        ],
+        "abilita": [
+          "Conversione binario/decimale",
+          "Conversione in complemento a due",
+          "Numeri frazionari binari (virgola fissa)"
+        ]
+      },
+      {
+        "titolo": "Foglio di calcolo",
+        "classiOrigine": [
+          "1F",
+          "1T"
+        ],
+        "conoscenze": [
+          "Foglio di calcolo"
+        ],
+        "abilita": [
+          "Impostare formule e funzioni usando riferimenti relativi, assoluti e misti",
+          "Riconoscere i principali messaggi di errore del programma",
+          "Costruire grafici di vario tipo",
+          "Utilizzare un foglio di calcolo per funzioni statistiche (media)"
+        ]
+      },
+      {
+        "titolo": "Reti e servizi web",
+        "classiOrigine": [
+          "1F",
+          "1T"
+        ],
+        "conoscenze": [
+          "Introduzione alle reti e servizi web",
+          "Servizi internet",
+          "Navigazione su internet ed utilizzo del browser"
+        ],
+        "abilita": [
+          "Utilizzare in modo efficace gli strumenti di navigazione web",
+          "Conoscere le differenze fra i vari servizi presenti su internet"
+        ]
+      },
+      {
+        "titolo": "Strumenti di presentazione",
+        "classiOrigine": [
+          "1F"
+        ],
+        "conoscenze": [
+          "Strumenti di presentazione (Powerpoint)"
+        ],
+        "abilita": [
+          "Presentare in modo efficace attraverso l’utilizzo di strumenti di presentazione"
+        ]
+      },
+      {
+        "titolo": "Word processor",
+        "classiOrigine": [
+          "1F"
+        ],
+        "conoscenze": [
+          "Strumenti di word processing (Word)"
+        ],
+        "abilita": [
+          "Utilizzare un word processor per creare, formattare e rifinire un documento, con particolare attenzione alla formattazione di testi, paragrafi, elenchi, immagini, disegni, semplici tabelle, sezioni e stampa",
+          "Saper costruire documenti, individuando i componenti necessari al tipo di documento richiesto",
+          "Saper gestire un documento nelle operazioni di salvataggio e stampa"
+        ]
+      }
+    ],
+    "seconde": [
+      {
+        "titolo": "Python - variabili e ambiente di sviluppo",
+        "classiOrigine": [
+          "2E",
+          "2F"
+        ],
+        "conoscenze": [
+          "Python: variabili",
+          "Python: costrutti di base di selezione (if) e iterazione (for)",
+          "Python: liste e stringhe",
+          "Python: funzioni"
+        ],
+        "abilita": [
+          "Saper utilizzare l’ambiente di sviluppo",
+          "Scegliere le istruzioni più idonee per risolvere un problema",
+          "Costruire semplici programmi che utilizzino le istruzioni di iterazione",
+          "Scegliere il ciclo più idoneo per risolvere ogni specifico caso",
+          "Saper effettuare semplici operazioni su stringhe e liste",
+          "Decomposizione di un problema in sotto-problemi"
+        ]
+      }
+    ],
+    "terze": [
+      {
+        "titolo": "CSS",
+        "classiOrigine": [
+          "3F",
+          "3H"
+        ],
+        "conoscenze": [
+          "CSS"
+        ],
+        "abilita": [
+          "Saper progettare un foglio di stile",
+          "Costruire un foglio di stile"
+        ]
+      },
+      {
+        "titolo": "Data Science, NumPy e Matplotlib",
+        "classiOrigine": [
+          "3F",
+          "3H"
+        ],
+        "conoscenze": [
+          "Data Science",
+          "Libreria NumPy",
+          "Matplotlib"
+        ],
+        "abilita": [
+          "Numpy: manipolazione di array/matrici",
+          "Numpy: calcolo scientifico efficiente",
+          "Statistica ed analisi dei dati",
+          "MatplotLib: realizzazione di grafici mediante l’utilizzo della libreria"
+        ]
+      },
+      {
+        "titolo": "Programmazione orientata agli oggetti",
+        "classiOrigine": [
+          "3F",
+          "3H"
+        ],
+        "conoscenze": [
+          "La programmazione orientata agli oggetti",
+          "Classi e oggetti",
+          "Metodi e attributi",
+          "Il metodo costruttore",
+          "Information hiding (attributi public/private, getters e setters)",
+          "Relazione fra le varie classi"
+        ],
+        "abilita": [
+          "Saper fare una analisi orientata agli oggetti con relative classi",
+          "Saper progettare semplici classi individuando attributi, metodi e visibilità opportuni",
+          "Saper creare semplici gerarchie di classi"
+        ]
+      }
+    ],
+    "quarte": [
+      {
+        "titolo": "Modello concettuale ER",
+        "classiOrigine": [
+          "4F",
+          "4H"
+        ],
+        "conoscenze": [
+          "Concetti base del modello concettuale ER",
+          "Entità, attributi e associazioni",
+          "Schemi e istanze",
+          "Tipi di associazioni",
+          "Gerarchie di entità"
+        ],
+        "abilita": [
+          "Saper costruire un diagramma E/R adeguato alla situazione"
+        ]
+      },
+      {
+        "titolo": "Modello relazionale e SQL",
+        "classiOrigine": [
+          "4F",
+          "4H"
+        ],
+        "conoscenze": [
+          "Modello relazionale",
+          "Regole di derivazione dello schema ER in schema relazionale",
+          "Conoscere i principali comandi DDL di SQL per la creazione di tabelle, l’inserimento, la cancellazione e la modifica dei dati",
+          "Conoscere i comandi SQL per la creazione di query di selezione, aggregazione, ordinamento, raggruppamento, nidificate",
+          "Conoscere le principali regole SQL"
+        ],
+        "abilita": [
+          "Saper implementare interrogazioni mediante SQL"
+        ]
+      },
+      {
+        "titolo": "Sistema informativo, sistema informatico e DBMS",
+        "classiOrigine": [
+          "4F",
+          "4H"
+        ],
+        "conoscenze": [
+          "Sistema informativo e sistema informatico",
+          "Differenza tra dato/informazione/conoscenza",
+          "Architettura di un DBMS",
+          "Linguaggi per la gestione delle basi di dati"
+        ],
+        "abilita": [
+          "Saper modellare una realtà analizzando tutti gli aspetti ritenuti essenziali per una corretta applicazione di un appropriato livello di astrazione"
+        ]
+      },
+      {
+        "titolo": "Sviluppo web dinamico: JavaScript, DOM e Flask",
+        "classiOrigine": [
+          "4F",
+          "4H"
+        ],
+        "conoscenze": [
+          "Linguaggio Javascript e DOM",
+          "Creazione di siti web dinamici mediante il framework Flask",
+          "Linguaggio di programmazione Javascript e DOM"
+        ],
+        "abilita": [
+          "Usare il linguaggio di programmazione Javascript",
+          "Programmazione web con Javascript",
+          "Saper scrivere script idonei a rendere dinamiche pagine web",
+          "Creazione di siti web dinamici con Flask"
+        ]
+      }
+    ]
+  }
+}
