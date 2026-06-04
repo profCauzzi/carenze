@@ -3,29 +3,58 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 
+using A = DocumentFormat.OpenXml.Drawing;
+using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
+
 namespace CarenzeGenerator.Services;
 
 public static class DocxService
 {
+    // Template Word vuoto con il solo header già impostato.
+    // Salva il file in: Assets/template_header.docx
+    private static readonly string TemplatePath = Path.Combine("Assets", "template_header.docx");
+
+    // Firma opzionale come immagine.
+    // Salva il file in: Assets/firma.png
+    private static readonly string FirmaImagePath = Path.Combine("Assets", "firma.png");
+
     public static string GeneraScheda(Studente studente, string outputDir)
     {
         Directory.CreateDirectory(outputDir);
 
+        if (!File.Exists(TemplatePath))
+        {
+            throw new FileNotFoundException(
+                $"Template Word non trovato. Crea un file Word vuoto con il solo header e salvalo in: {TemplatePath}"
+            );
+        }
+
         string fileName = $"{Pulisci(studente.Classe)}_{Pulisci(studente.Cognome)}_{Pulisci(studente.Nome)}_carenze.docx";
         string path = Path.Combine(outputDir, fileName);
 
+        File.Copy(TemplatePath, path, true);
+
         using WordprocessingDocument document =
-            WordprocessingDocument.Create(path, WordprocessingDocumentType.Document);
+            WordprocessingDocument.Open(path, true);
 
-        MainDocumentPart mainPart = document.AddMainDocumentPart();
-        mainPart.Document = new Document();
+        MainDocumentPart mainPart = document.MainDocumentPart
+            ?? throw new InvalidOperationException("Il template non contiene un MainDocumentPart valido.");
 
-        Body body = new Body();
+        mainPart.Document ??= new Document();
 
-        //AggiungiParagrafo(body, "Scheda segnalazione carenze da colmare", false, false, null, 20);
+        Body body = mainPart.Document.Body ?? new Body();
+
+        if (mainPart.Document.Body == null)
+            mainPart.Document.Append(body);
+
+        PulisciCorpoTemplate(body);
+
+        AggiungiParagrafo(body, "\n\n", false, false, null, 20);
         AggiungiParagrafo(body, "ANNO SCOLASTICO 2025 / 2026 - SCRUTINIO FINALE", true, false, JustificationValues.Center, 24);
         AggiungiParagrafo(body, "SCHEDA di SEGNALAZIONE delle CARENZE da COLMARE", true, true, JustificationValues.Center, 26);
         AggiungiParagrafo(body, "");
+        AggiungiParagrafo(body, "\n\n", false, false, null, 20);
 
         AggiungiParagrafo(body, $"ALUNNO/A {studente.Nome} {studente.Cognome}    CLASSE {studente.Classe}");
         AggiungiParagrafo(body, $"DISCIPLINA {studente.Disciplina}");
@@ -99,13 +128,14 @@ public static class DocxService
         AggiungiParagrafo(body, "INDICAZIONI OPERATIVE DI LAVORO", true);
         AggiungiParagrafo(
             body,
-            "Al fine di colmare le lacune evidenziate, si raccomanda lo studio dei contenuti teorici e la ripetizione guidata degli esercizi disponibili sul sito cauzzi.prof (https://cauzzi.prof), con particolare attenzione agli argomenti oggetto di recupero."
+            "Prima di affrontare la prova, si consiglia di ripassare la parte teorica e ripetere lo svolgimento degli esercizi presenti sulla piattaforma Moodle."
         );
 
         AggiungiParagrafo(body, "");
 
         AggiungiParagrafo(body, "PROVA DI ACCERTAMENTO", true);
-        AggiungiParagrafo(body, studente.ProvaAccertamento ? "☑ SI    ☐ NO" : "☐ SI    ☑ NO");
+        //AggiungiParagrafo(body, studente.ProvaAccertamento ? "☑ SI    ☐ NO" : "☐ SI    ☑ NO");
+        AggiungiParagrafo(body, studente.ProvaAccertamento ? "[X] SI    [ ] NO" : "[ ] SI    [X] NO");
 
         AggiungiParagrafo(body, "");
 
@@ -120,28 +150,57 @@ public static class DocxService
             ? "____________"
             : studente.Data;
 
-        string docente = string.IsNullOrWhiteSpace(studente.Docente)
-            ? "__________________________"
-            : studente.Docente;
+        AggiungiParagrafo(body, $"DATA: {data}        IL DOCENTE");
 
-        AggiungiParagrafo(body, $"DATA: {data}        IL DOCENTE {docente}");
-
-        SectionProperties sectionProperties = new SectionProperties(
-            new PageMargin
-            {
-                Top = 720,
-                Bottom = 720,
-                Left = 720,
-                Right = 720
-            }
+        AggiungiImmagine(
+            mainPart,
+            body,
+            FirmaImagePath,
+            CmToEmu(6.5),
+            CmToEmu(1.8),
+            JustificationValues.Right
         );
 
-        body.Append(sectionProperties);
+        AssicuraSectionProperties(body);
 
-        mainPart.Document.Append(body);
         mainPart.Document.Save();
 
         return path;
+    }
+
+    private static void PulisciCorpoTemplate(Body body)
+    {
+        // Conserva SectionProperties perché contengono anche i riferimenti a header/footer.
+        SectionProperties? sectionProperties = body.Elements<SectionProperties>().LastOrDefault()?.CloneNode(true) as SectionProperties;
+
+        body.RemoveAllChildren();
+
+        if (sectionProperties != null)
+            body.Append(sectionProperties);
+    }
+
+    private static void AssicuraSectionProperties(Body body)
+    {
+        SectionProperties? sectionProperties = body.Elements<SectionProperties>().LastOrDefault();
+
+        if (sectionProperties == null)
+        {
+            sectionProperties = new SectionProperties();
+            body.Append(sectionProperties);
+        }
+
+        if (!sectionProperties.Elements<PageMargin>().Any())
+        {
+            sectionProperties.Append(
+                new PageMargin
+                {
+                    Top = 720,
+                    Bottom = 720,
+                    Left = 720,
+                    Right = 720
+                }
+            );
+        }
     }
 
     private static void TitoloSezione(Body body, string testo)
@@ -184,15 +243,144 @@ public static class DocxService
         paragraph.Append(paragraphProperties);
         paragraph.Append(run);
 
-        body.Append(paragraph);
+        InserisciPrimaDiSectionProperties(body, paragraph);
     }
 
+    private static void AggiungiImmagine(
+        MainDocumentPart mainPart,
+        Body body,
+        string imagePath,
+        long widthEmu,
+        long heightEmu,
+        JustificationValues? allineamento = null)
+    {
+        if (!File.Exists(imagePath))
+            return;
+
+        PartTypeInfo imageType = GetImagePartType(imagePath);
+        ImagePart imagePart = mainPart.AddImagePart(imageType);
+
+        using (FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
+        {
+            imagePart.FeedData(stream);
+        }
+
+        string relationshipId = mainPart.GetIdOfPart(imagePart);
+
+        uint imageId = (uint)new Random().Next(1, int.MaxValue);
+
+        var drawing =
+            new Drawing(
+                new DW.Inline(
+                    new DW.Extent { Cx = widthEmu, Cy = heightEmu },
+                    new DW.EffectExtent
+                    {
+                        LeftEdge = 0L,
+                        TopEdge = 0L,
+                        RightEdge = 0L,
+                        BottomEdge = 0L
+                    },
+                    new DW.DocProperties
+                    {
+                        Id = imageId,
+                        Name = Path.GetFileName(imagePath)
+                    },
+                    new DW.NonVisualGraphicFrameDrawingProperties(
+                        new A.GraphicFrameLocks { NoChangeAspect = true }),
+                    new A.Graphic(
+                        new A.GraphicData(
+                            new PIC.Picture(
+                                new PIC.NonVisualPictureProperties(
+                                    new PIC.NonVisualDrawingProperties
+                                    {
+                                        Id = imageId,
+                                        Name = Path.GetFileName(imagePath)
+                                    },
+                                    new PIC.NonVisualPictureDrawingProperties()),
+                                new PIC.BlipFill(
+                                    new A.Blip
+                                    {
+                                        Embed = relationshipId,
+                                        CompressionState = A.BlipCompressionValues.Print
+                                    },
+                                    new A.Stretch(new A.FillRectangle())),
+                                new PIC.ShapeProperties(
+                                    new A.Transform2D(
+                                        new A.Offset { X = 0L, Y = 0L },
+                                        new A.Extents { Cx = widthEmu, Cy = heightEmu }),
+                                    new A.PresetGeometry(new A.AdjustValueList())
+                                    {
+                                        Preset = A.ShapeTypeValues.Rectangle
+                                    }
+                                )
+                            )
+                        )
+                        { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" }
+                    )
+                )
+                {
+                    DistanceFromTop = 0U,
+                    DistanceFromBottom = 0U,
+                    DistanceFromLeft = 0U,
+                    DistanceFromRight = 0U
+                }
+            );
+
+        Paragraph paragraph = new Paragraph(
+            new ParagraphProperties(
+                new Justification { Val = allineamento ?? JustificationValues.Center }
+            ),
+            new Run(drawing)
+        );
+
+        InserisciPrimaDiSectionProperties(body, paragraph);
+    }
+
+    private static void InserisciPrimaDiSectionProperties(Body body, OpenXmlElement element)
+    {
+        SectionProperties? sectionProperties = body.Elements<SectionProperties>().LastOrDefault();
+
+        if (sectionProperties != null)
+            body.InsertBefore(element, sectionProperties);
+        else
+            body.Append(element);
+    }
+
+    private static PartTypeInfo GetImagePartType(string imagePath)
+    {
+        string ext = Path.GetExtension(imagePath).ToLowerInvariant();
+
+        return ext switch
+        {
+            ".jpg" or ".jpeg" => ImagePartType.Jpeg,
+            ".gif" => ImagePartType.Gif,
+            ".bmp" => ImagePartType.Bmp,
+            ".tif" or ".tiff" => ImagePartType.Tiff,
+            _ => ImagePartType.Png
+        };
+    }
+
+    private static long CmToEmu(double cm)
+    {
+        return (long)(cm * 360000);
+    }
+
+    /*
     private static string Check(Studente s, string voce)
     {
         return s.TipologieAccertamento.Any(t =>
             t.Equals(voce, StringComparison.OrdinalIgnoreCase))
             ? "☑"
             : "☐";
+    }
+    */
+    
+    private static string Check(Studente s, string voce)
+    {
+        return s.TipologieAccertamento.Any(t =>
+            t.Equals(voce, StringComparison.OrdinalIgnoreCase))
+            ? "[X]"
+            : "[ ]";
     }
 
     private static string Pulisci(string testo)
